@@ -16,7 +16,7 @@ const useGetDocumentTitlePrice = () => {
         })}`
 
   useEffect(() => {
-    document.title = `PancakeSwap${cakePriceUsdString}`
+    document.title = `Hamster Exchange`
   }, [cakePriceUsdString])
 }
 export default useGetDocumentTitlePrice

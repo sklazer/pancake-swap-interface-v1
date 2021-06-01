@@ -20,11 +20,10 @@ const Container = styled.div`
   }
 
   ${({ theme }) => theme.mediaQueries.lg} {
-    background-image: url('/images/arch-${({ theme }) => (theme.isDark ? 'dark' : 'light')}.svg'),
-      url('/images/left-pancake.svg'), url('/images/right-pancake.svg');
+    background-image: url('/images/bg.jpg');
     background-repeat: no-repeat;
-    background-position: center 420px, 10% 230px, 90% 230px;
-    background-size: contain, 266px, 266px;
+    background-position: center center;
+    background-size: contain;
     min-height: 90vh;
   }
 `
