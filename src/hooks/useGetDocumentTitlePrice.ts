@@ -16,7 +16,7 @@ const useGetDocumentTitlePrice = () => {
         })}`
 
   useEffect(() => {
-    document.title = `Hamster Exchange`
+    document.title = 'SafeHamsters Planet. Change your coins on Binance Smart Chain with us for Fun & Rich';
   }, [cakePriceUsdString])
 }
 export default useGetDocumentTitlePrice
