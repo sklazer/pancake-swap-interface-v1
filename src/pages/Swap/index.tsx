@@ -1,8 +1,8 @@
 import { CurrencyAmount, JSBI, Token, Trade } from '@pancakeswap-libs/sdk'
-import React, { useCallback, useContext, useEffect, useMemo, useState, useRef } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
-import { CardBody, ArrowDownIcon, Button, IconButton, Text, useModal, Link, Flex } from '@pancakeswap-libs/uikit'
-import styled, { ThemeContext } from 'styled-components'
+import { CardBody, ArrowDownIcon, Button, IconButton, Text} from '@pancakeswap-libs/uikit'
+import { ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
 import Card, { GreyCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
@@ -36,25 +36,18 @@ import Loader from 'components/Loader'
 import useI18n from 'hooks/useI18n'
 import PageHeader from 'components/PageHeader'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import V2ExchangeRedirectModal from 'components/V2ExchangeRedirectModal'
 import AppBody from '../AppBody'
 
-const StyledLink = styled(Link)`
-  display: inline;
-  color: ${({ theme }) => theme.colors.failure};
-`
 
 const Swap = () => {
   const loadedUrlParams = useDefaultsFromURLSearch()
   const TranslateString = useI18n()
-  const [modalCountdownSecondsRemaining, setModalCountdownSecondsRemaining] = useState(5)
+  const [modalCountdownSecondsRemaining] = useState(5)
   const [disableSwap, setDisableSwap] = useState(false)
   const [hasPoppedModal, setHasPoppedModal] = useState(false)
   const [interruptRedirectCountdown, setInterruptRedirectCountdown] = useState(false)
-  const [onPresentV2ExchangeRedirectModal] = useModal(
-    <V2ExchangeRedirectModal handleCloseModal={() => setInterruptRedirectCountdown(true)} />
-  )
-  const onPresentV2ExchangeRedirectModalRef = useRef(onPresentV2ExchangeRedirectModal)
+
+
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
@@ -105,41 +98,6 @@ const Swap = () => {
 
   // Manage disabled trading pairs that should redirect users to V2
   useEffect(() => {
-    const disabledSwaps = ['BNB', 'BUSD', 'USDT', 'USDC', 'CAKE', 'BUNNY', 'ETH', 'BTCB', 'AUTO', 'XVS']
-    const inputCurrencySymbol = currencies[Field.INPUT]?.symbol || ''
-    const outputCurrencySymbol = currencies[Field.OUTPUT]?.symbol || ''
-    const doesInputMatch = disabledSwaps.includes(inputCurrencySymbol)
-    const doesOutputMatch = disabledSwaps.includes(outputCurrencySymbol)
-
-    if (doesInputMatch && doesOutputMatch) {
-      // Prevent infinite re-render of modal with this condition
-      if (!hasPoppedModal) {
-        setHasPoppedModal(true)
-        onPresentV2ExchangeRedirectModalRef.current()
-      }
-
-      // Controls the swap buttons being disabled & renders a message
-      setDisableSwap(true)
-
-      const tick = () => {
-        setModalCountdownSecondsRemaining((prevSeconds) => prevSeconds - 1)
-      }
-      const timerInterval = setInterval(() => tick(), 1000)
-
-      if (interruptRedirectCountdown) {
-        // Reset timer if countdown is interrupted
-        clearInterval(timerInterval)
-        setModalCountdownSecondsRemaining(5)
-      }
-
-      if (modalCountdownSecondsRemaining <= 0) {
-        window.location.href = 'https://exchange.pancakeswap.finance/#/swap'
-      }
-
-      return () => {
-        clearInterval(timerInterval)
-      }
-    }
 
     // Unset disableSwap state if the swap inputs & outputs dont match disabledSwaps
     setDisableSwap(false)
@@ -148,7 +106,6 @@ const Swap = () => {
     currencies,
     hasPoppedModal,
     modalCountdownSecondsRemaining,
-    onPresentV2ExchangeRedirectModalRef,
     interruptRedirectCountdown,
   ])
 
@@ -464,17 +421,7 @@ const Swap = () => {
               )}
             </AutoColumn>
             <BottomGrouping>
-              {disableSwap && (
-                <Flex alignItems="center" justifyContent="center" mb="1rem">
-                  <Text color="failure">
-                    Please use{' '}
-                    <StyledLink external href="https://exchange.pancakeswap.finance">
-                      PancakeSwap V2
-                    </StyledLink>{' '}
-                    to make this trade
-                  </Text>
-                </Flex>
-              )}
+
               {!account ? (
                 <ConnectWalletButton width="100%" />
               ) : showWrap ? (
